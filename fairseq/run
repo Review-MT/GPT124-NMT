@@ -1,0 +1,108 @@
+#!/bin/bash
+
+export NCCL_IB_DISABLE=1
+export CUDA_VISIBLE_DEVICES=0
+
+echo "[logging] Starting GQA MLM training..."
+
+# ==========================================
+# LOCAL PATHS
+# ==========================================
+
+local_root="/mnt/storage/divya/exam/graformer_workspace"
+
+local_dataset_path="/mnt/storage/divya/exam/"
+
+local_checkpoint_path=${local_root}/mlm_gqa_checkpoints
+
+mkdir -p ${local_checkpoint_path}
+
+echo "[logging] local_dataset_path: ${local_dataset_path}"
+echo "[logging] local_checkpoint_path: ${local_checkpoint_path}"
+
+# ==========================================
+# PYTHON
+# ==========================================
+
+CMD="python3"
+
+# ==========================================
+# DATA
+# ==========================================
+
+lang_list="hi,mr"
+
+local_data="${local_dataset_path}/data-bin"
+
+# ==========================================
+# TRAIN
+# ==========================================
+
+$CMD ../train.py \
+    --num-workers 2 \
+    ${local_data} \
+    \
+    --task new_multilingual_masked_lm \
+    --langs ${lang_list} \
+    --multilang-sampling-alpha 0.7 \
+    --sample-break-mode eos \
+    --replace-mask-with-bos \
+    \
+    --valid-subset none \
+    --disable-validation \
+    \
+    --arch encoder_mlm_gqa \
+    \
+    --encoder-layers 6 \
+    --encoder-embed-dim 1024 \
+    --encoder-ffn-embed-dim 4096 \
+    --encoder-attention-heads 16 \
+    \
+    --encoder-kv-attention-heads 4 \
+    \
+    --activation-fn gelu \
+    \
+    --dropout 0.1 \
+    --attention-dropout 0.1 \
+    --activation-dropout 0.1 \
+    \
+    --encoder-normalize-before \
+    \
+    --use-rmsnorm \
+    \
+    --share-encoder-input-output-embed \
+    \
+    --no-scale-embedding \
+    \
+    --no-token-positional-embeddings \
+    \
+    --use-rope \
+    --rope-theta 10000 \
+    \
+    --attn-implementation fast_gqa \
+    \
+    --tokens-per-sample 2048 \
+    --max-tokens 8000 \
+    \
+    --optimizer adam \
+    --adam-betas '(0.9,0.98)' \
+    --lr 7e-4 \
+    --warmup-init-lr 1e-07 \
+    --lr-scheduler inverse_sqrt \
+    --warmup-updates 4000 \
+    --update-freq 2 \
+    \
+    --criterion label_smoothed_cross_entropy \
+    --label-smoothing 0.1 \
+    \
+    --max-epoch 2 \
+    --min-loss-scale 0.0 \
+    \
+    --save-interval 1 \
+    --keep-last-epochs 2 \
+    --save-dir ${local_checkpoint_path} \
+    \
+    --fp16 \
+    --ddp-backend no_c10d
+
+echo "[logging] Training Finished!"
