@@ -3,7 +3,7 @@ export PYTHONPATH=/Data/divya/Graformer:$PYTHONPATH
 #!/bin/bash
 
 export NCCL_IB_DISABLE=1
-export CUDA_VISIBLE_DEVICES=3
+export CUDA_VISIBLE_DEVICES=2
 
 echo "[logging] Starting GPT-124M style GQA MLM training..."
 
@@ -14,9 +14,9 @@ echo "[logging] Starting GPT-124M style GQA MLM training..."
 local_root="/mnt/storage/divya/exam/graformer_workspace"
 
 # local_dataset_path="/mnt/storage/divya/exam/data-bin/lm-data"
-local_dataset_path="/mnt/storage/divya/exam/raw/data-bin"
+local_dataset_path="/mnt/storage/divya/exam/part2/data-bin"
 
-local_checkpoint_path=${local_root}/egpt124m_checkpoints
+local_checkpoint_path=${local_root}/ebert124m_checkpoints
 
 mkdir -p ${local_checkpoint_path}
 
@@ -43,20 +43,11 @@ $CMD ../train.py \
     --disable-validation \
     --multilang-sampling-alpha 0.7 \
     \
+    --encoder-learned-pos \
     --sample-break-mode eos \
     --replace-mask-with-bos \
     \
-    --arch encoder_mlm_gqa \
-    \
-    --encoder-layers 12 \
-    \
-    --encoder-embed-dim 768 \
-    \
-    --encoder-ffn-embed-dim 3072 \
-    \
-    --encoder-attention-heads 12 \
-    \
-    --encoder-kv-attention-heads 4 \
+    --arch transformer_encoder_model_12l_12h_768 \
     \
     --activation-fn gelu \
     \
@@ -69,14 +60,6 @@ $CMD ../train.py \
     --share-encoder-input-output-embed \
     \
     --no-scale-embedding \
-    \
-    --use-rmsnorm \
-    \
-    --use-rope \
-    --no-token-positional-embeddings \
-    --rope-theta 10000 \
-    \
-    --attn-implementation fast_gqa \
     \
     --tokens-per-sample 1024 \
     \

@@ -13,7 +13,7 @@ local_root="/mnt/storage/divya/exam/graformer_workspace"
 
 # dataset root
 #local_dataset_path="/mnt/storage/divya/exam/"
-local_dataset_path="/mnt/storage/divya/exam/part2/data-bin"
+local_dataset_path="/mnt/storage/divya/exam/raw/data-bin"
 # checkpoints
 local_checkpoint_path=${local_root}/dgpt124m_checkpoints
 
@@ -75,7 +75,7 @@ $CMD ../train.py \
     --attention-dropout 0.1 \
     --activation-dropout 0.1 \
     \
-    --tokens-per-sample 512 \
+    --tokens-per-sample 1024 \
     --max-tokens 4096 \
     \
     --optimizer adam \

@@ -7,13 +7,13 @@ export PYTHONPATH=/Data/divya/Graformer:$PYTHONPATH
 # bash infer_mr_hi.sh
 # =========================================================
 
-DATA_BIN="/mnt/storage/divya/exam/data-bin/lm-data"
+DATA_BIN="/mnt/storage/divya/exam/raw/data-bin/"
 
-CKPT_PATH="/mnt/storage/divya/exam/graformer_workspace/gf/checkpoint_last.pt"
+CKPT_PATH="/mnt/storage/divya/exam/graformer_workspace/gpt_nmt2/checkpoint_last.pt"
 
 OUTPUT_DIR="/mnt/storage/divya/exam/graformer_workspace/inference_outputs"
 
-USER_DIR="/mnt/storage/divya/exam/graformer_workspace/gf" #"/Data/divya/Graformer"
+USER_DIR="/mnt/storage/divya/exam/graformer_workspace/gpt_nmt2" #"/Data/divya/Graformer"
 
 mkdir -p ${OUTPUT_DIR}
 
@@ -68,7 +68,7 @@ do
         --decoder-langtok \
         --lang-tok-replacing-bos-eos \
         \
-        --gen-subset valid \
+        --gen-subset test \
         \
         --beam 4 \
         --lenpen 0.6 \

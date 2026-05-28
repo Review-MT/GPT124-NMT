@@ -2,15 +2,15 @@
 
 export PYTHONPATH=/Data/divya/Graformer:$PYTHONPATH
 export NCCL_IB_DISABLE=1
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=2,4
 
 # =========================================================
 # PATHS
 # =========================================================
 
-DATA_BIN="/mnt/storage/divya/exam/raw/data-bin" #"/mnt/storage/divya/exam/data-bin/lm-data"
+DATA_BIN="/mnt/storage/divya/exam/part2/data-bin" #"/mnt/storage/divya/exam/data-bin/lm-data"
 
-SAVE_DIR="/mnt/storage/divya/exam/graformer_workspace/gpt_nmt3"
+SAVE_DIR="/mnt/storage/divya/exam/graformer_workspace/ebert_dgpt_nmt"
 
 # ---------------------------------------------------------
 # PRETRAINED CHECKPOINTS
@@ -18,7 +18,7 @@ SAVE_DIR="/mnt/storage/divya/exam/graformer_workspace/gpt_nmt3"
 
 DECODER_CKPT="/mnt/storage/divya/exam/graformer_workspace/dgpt124m_checkpoints/checkpoint_last.pt"
 
-ENCODER_CKPT="/mnt/storage/divya/exam/graformer_workspace/egpt124m_checkpoints/checkpoint_last.pt"
+ENCODER_CKPT="/mnt/storage/divya/exam/graformer_workspace/ebert124m_checkpoints/checkpoint_last.pt"
 mkdir -p ${SAVE_DIR}
 
 CMD="python3"
@@ -45,8 +45,6 @@ $CMD ../train.py \
     \
     --task translation_multi_simple_epoch \
     --langs ${lang_list} \
-    --lang-tok-replacing-bos-eos \
-    --encoder-langtok src \
     --lang-pairs ${lang_pairs} \
     --valid-subset valid \
     --validate-interval-updates 1000 \
@@ -72,7 +70,6 @@ $CMD ../train.py \
     --encoder-attention-heads 12 \
     --decoder-attention-heads 12 \
     \
-    --encoder-kv-attention-heads 4 \
     --decoder-kv-attention-heads 4 \
     \
     --use-rmsnorm \
@@ -106,9 +103,9 @@ $CMD ../train.py \
     --finetune-from-model ${ENCODER_CKPT},${DECODER_CKPT} \
     --share-all-embeddings \
     \
-    --max-update 50000 \
+    --max-update 70000 \
     \
-    --max-tokens 1024 \
+    --max-tokens 1000 \
     \
     --optimizer adam \
     --adam-betas '(0.9,0.95)' \
